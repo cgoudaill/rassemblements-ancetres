@@ -83,10 +83,12 @@ main{padding:1.75rem 2rem;max-width:1380px;margin:0 auto}
 .card.moto:hover{border-color:var(--moto)}
 
 /* Card image */
-.ci{height:155px;overflow:hidden;position:relative;background:var(--warm)}
-.ci img{width:100%;height:100%;object-fit:cover;transition:transform .55s;display:block;filter:brightness(.92) contrast(1.05) saturate(1.1)}
-.card:hover .ci img{transform:scale(1.07)}
-.ci-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,transparent 40%,rgba(18,16,14,.45) 100%)}
+.ci{height:140px;overflow:hidden;position:relative;display:flex;align-items:center;justify-content:center}
+.card.car .ci{background:linear-gradient(145deg,#f5eed5 0%,#e8dbb8 50%,#d4c48a 100%)}
+.card.moto .ci{background:linear-gradient(145deg,#f5ded5 0%,#e8c4b0 50%,#d4906a 100%)}
+.ci-icon{position:relative;z-index:2;transition:transform .4s cubic-bezier(.34,1.56,.64,1)}
+.card:hover .ci-icon{transform:scale(1.08) translateY(-3px)}
+.ci-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,transparent 30%,rgba(18,16,14,.18) 100%)}
 .ci-badge{position:absolute;top:.6rem;left:.6rem;font-size:.58rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase;padding:.15rem .5rem;border-radius:2px;backdrop-filter:blur(6px)}
 .ci-badge.car{background:rgba(154,117,32,.85);color:#f5eed8}
 .ci-badge.moto{background:rgba(160,48,16,.85);color:#fde8de}
@@ -165,6 +167,7 @@ footer strong{color:var(--text);font-weight:500}
 <!-- SEO invisible author tag -->
 <span style="display:none" aria-hidden="true" itemscope itemtype="https://schema.org/Person">
   <span itemprop="name">Cédric Goudaillier</span>
+  <span itemprop="description">Agenda des rassemblements voitures et motos anciennes en Belgique 2026</span>
 </span>
 
 <!-- HERO -->
@@ -230,8 +233,8 @@ footer strong{color:var(--text);font-weight:500}
 <div class="ov" id="modal" role="dialog" aria-modal="true" aria-labelledby="m-title">
   <div class="modal">
     <button class="mclose" id="mc" aria-label="Fermer">✕</button>
-    <div class="mimg">
-      <div class="mimg-ph" id="m-img-ph"><img id="m-img" src="" alt="" style="display:none"></div>
+    <div class="mimg" id="m-img-ph" style="display:flex;align-items:center;justify-content:center">
+      <div id="m-svg-icon" style="position:relative;z-index:2"></div>
       <div class="mimg-ov"></div>
     </div>
     <div class="mst car" id="m-stripe"></div>
@@ -250,7 +253,7 @@ footer strong{color:var(--text);font-weight:500}
 </div>
 
 <footer role="contentinfo">
-  <strong>Cédric Goudaillier</strong> · Passionné de véhicules anciens · Waterloo, Belgique<br>
+  <strong>Cédric Goudaillier</strong> · Waterloo, Belgique<br>
   Agenda compilé manuellement · Mis à jour le 19/03/2026 · 
   <a href="https://cgoudaill.github.io/rassemblements-ancetres" rel="canonical">cgoudaill.github.io/rassemblements-ancetres</a>
 </footer>
@@ -395,9 +398,30 @@ function rGrid(){
     c.style.animationDelay=`${Math.min(i*35,350)}ms`;
     c.setAttribute('role','listitem');
     const img=getImg(e,i);
+    const svgIcon=e.t==='car'?`<svg width="88" height="52" viewBox="0 0 88 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M8 34 L18 18 Q20 14 25 14 L63 14 Q68 14 70 18 L80 34 Q83 35 83 38 L83 44 Q83 46 81 46 L74 46 Q72 46 72 44 L72 40 L16 40 L16 44 Q16 46 14 46 L7 46 Q5 46 5 44 L5 38 Q5 35 8 34Z" fill="rgba(154,117,32,.18)" stroke="rgba(154,117,32,.55)" stroke-width="1.5"/>
+      <circle cx="22" cy="41" r="7" fill="rgba(154,117,32,.12)" stroke="rgba(154,117,32,.5)" stroke-width="1.5"/>
+      <circle cx="22" cy="41" r="3.5" fill="rgba(154,117,32,.3)"/>
+      <circle cx="66" cy="41" r="7" fill="rgba(154,117,32,.12)" stroke="rgba(154,117,32,.5)" stroke-width="1.5"/>
+      <circle cx="66" cy="41" r="3.5" fill="rgba(154,117,32,.3)"/>
+      <path d="M26 14 L32 22 L56 22 L62 14" stroke="rgba(154,117,32,.4)" stroke-width="1" fill="none"/>
+      <path d="M36 22 L38 14" stroke="rgba(154,117,32,.3)" stroke-width="1"/>
+      <path d="M50 22 L52 14" stroke="rgba(154,117,32,.3)" stroke-width="1"/>
+    </svg>`:
+    `<svg width="72" height="52" viewBox="0 0 72 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="18" cy="40" r="9" fill="rgba(160,48,16,.1)" stroke="rgba(160,48,16,.5)" stroke-width="1.5"/>
+      <circle cx="18" cy="40" r="4" fill="rgba(160,48,16,.3)"/>
+      <circle cx="54" cy="40" r="9" fill="rgba(160,48,16,.1)" stroke="rgba(160,48,16,.5)" stroke-width="1.5"/>
+      <circle cx="54" cy="40" r="4" fill="rgba(160,48,16,.3)"/>
+      <path d="M18 31 L18 22 Q18 18 22 16 L38 12 Q44 10 48 14 L58 24 Q62 28 60 32 L54 32 L18 31Z" fill="rgba(160,48,16,.15)" stroke="rgba(160,48,16,.5)" stroke-width="1.5"/>
+      <path d="M18 31 L54 32" stroke="rgba(160,48,16,.4)" stroke-width="1.5"/>
+      <path d="M38 12 L40 31" stroke="rgba(160,48,16,.3)" stroke-width="1"/>
+      <path d="M52 18 L58 24" stroke="rgba(160,48,16,.35)" stroke-width="1.2"/>
+      <circle cx="26" cy="14" r="2" fill="rgba(160,48,16,.25)"/>
+    </svg>`;
     c.innerHTML=`
       <div class="ci">
-        <img src="${img}" alt="${e.title}" loading="lazy" onerror="this.style.display='none'">
+        <div class="ci-icon">${svgIcon}</div>
         <div class="ci-overlay"></div>
         <div class="ci-badge ${e.t}">${e.t==='car'?'Voiture ancêtre':'Moto'}</div>
         <div class="ci-dist">${e.km} km</div>
@@ -411,7 +435,7 @@ function rGrid(){
           <span class="badge ${isG(e.price)?'bp':'bp paid'}">${e.price}</span>
         </div>
       </div>`;
-    c.onclick=()=>oModal(e,img);
+    c.onclick=()=>oModal(e);
     g.appendChild(c);
   });
 }
@@ -429,11 +453,11 @@ function rMap(){
     L.circleMarker(e.coords,{radius:e.t==='moto'?9:8,color:col,fillColor:col,fillOpacity:.88,weight:2})
       .addTo(map)
       .bindPopup(`<div style="font-family:'Instrument Sans',sans-serif;min-width:190px;padding:.1rem"><b style="font-family:'Cormorant Garamond',serif;font-size:1rem;display:block;margin-bottom:.2rem">${e.title}</b><span style="font-size:.73rem;color:#666">${fmt(e.date)} · ${e.price} · ${e.km} km</span></div>`)
-      .on('click',()=>oModal(e,getImg(e,i)));
+      .on('click',()=>oModal(e));
   });
 }
 
-function oModal(e,imgUrl){
+function oModal(e){
   const isMoto=e.t==='moto';
   document.getElementById('m-type').textContent=isMoto?'🏍️ Moto':'🚗 Voiture ancêtre';
   document.getElementById('m-type').className=`mtype ${e.t}`;
@@ -448,12 +472,34 @@ function oModal(e,imgUrl){
   const ds=document.getElementById('m-dsec');
   if(e.desc){ds.style.display='block';document.getElementById('m-desc').textContent=e.desc;}else ds.style.display='none';
   const gb=document.getElementById('m-gcal');gb.href=e.gcal;gb.className=`gcbtn ${e.t}`;
-  // Image modale
-  const mi=document.getElementById('m-img');
-  mi.style.display='none';
-  mi.onload=()=>{mi.style.display='block'};
-  mi.onerror=()=>{mi.style.display='none'};
-  mi.src=imgUrl;mi.alt=e.title;
+  // Icône modale (SVG)
+  const ph=document.getElementById('m-img-ph');
+  const svgM=isMoto?`<svg width="160" height="100" viewBox="0 0 72 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="18" cy="40" r="9" fill="rgba(160,48,16,.12)" stroke="rgba(160,48,16,.55)" stroke-width="1.5"/>
+    <circle cx="18" cy="40" r="4" fill="rgba(160,48,16,.35)"/>
+    <circle cx="54" cy="40" r="9" fill="rgba(160,48,16,.12)" stroke="rgba(160,48,16,.55)" stroke-width="1.5"/>
+    <circle cx="54" cy="40" r="4" fill="rgba(160,48,16,.35)"/>
+    <path d="M18 31 L18 22 Q18 18 22 16 L38 12 Q44 10 48 14 L58 24 Q62 28 60 32 L54 32 L18 31Z" fill="rgba(160,48,16,.18)" stroke="rgba(160,48,16,.55)" stroke-width="1.5"/>
+    <path d="M18 31 L54 32" stroke="rgba(160,48,16,.45)" stroke-width="1.5"/>
+    <path d="M38 12 L40 31" stroke="rgba(160,48,16,.3)" stroke-width="1"/>
+    <path d="M52 18 L58 24" stroke="rgba(160,48,16,.4)" stroke-width="1.2"/>
+  </svg>`:
+  `<svg width="200" height="110" viewBox="0 0 88 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M8 34 L18 18 Q20 14 25 14 L63 14 Q68 14 70 18 L80 34 Q83 35 83 38 L83 44 Q83 46 81 46 L74 46 Q72 46 72 44 L72 40 L16 40 L16 44 Q16 46 14 46 L7 46 Q5 46 5 44 L5 38 Q5 35 8 34Z" fill="rgba(154,117,32,.2)" stroke="rgba(154,117,32,.6)" stroke-width="1.5"/>
+    <circle cx="22" cy="41" r="7" fill="rgba(154,117,32,.15)" stroke="rgba(154,117,32,.55)" stroke-width="1.5"/>
+    <circle cx="22" cy="41" r="3.5" fill="rgba(154,117,32,.35)"/>
+    <circle cx="66" cy="41" r="7" fill="rgba(154,117,32,.15)" stroke="rgba(154,117,32,.55)" stroke-width="1.5"/>
+    <circle cx="66" cy="41" r="3.5" fill="rgba(154,117,32,.35)"/>
+    <path d="M26 14 L32 22 L56 22 L62 14" stroke="rgba(154,117,32,.45)" stroke-width="1" fill="none"/>
+    <path d="M36 22 L38 14" stroke="rgba(154,117,32,.3)" stroke-width="1"/>
+    <path d="M50 22 L52 14" stroke="rgba(154,117,32,.3)" stroke-width="1"/>
+  </svg>`;
+  document.getElementById('m-svg-icon').innerHTML=svgM;
+  if(isMoto){
+    ph.style.background='linear-gradient(145deg,#f5ded5,#e8c4b0,#d4906a)';
+  } else {
+    ph.style.background='linear-gradient(145deg,#f5eed5,#e8dbb8,#d4c48a)';
+  }
   document.getElementById('modal').classList.add('open');
   document.body.style.overflow='hidden';
 }
