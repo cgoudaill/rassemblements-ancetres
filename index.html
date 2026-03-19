@@ -3,108 +3,171 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rassemblements 2026 – Voitures & Motos Belgique</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<title>Rassemblements 2026 · Belgique</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Instrument+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#0f0e0c;--bg2:#1a1916;--bg3:#242320;--gold:#c9a84c;--gold2:#e8c876;--cream:#f5f0e8;--text:#f0ece4;--muted:#8a8680;--border:#333230;--moto:#e07b2a;--moto2:#f5a052}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
-header{background:var(--bg2);border-bottom:1px solid var(--border);padding:1.2rem 2rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;flex-wrap:wrap;gap:.75rem}
-.logo{display:flex;align-items:center;gap:.75rem}
-.logo-icon{width:38px;height:38px;border:1.5px solid var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px}
-.logo-text h1{font-family:'Playfair Display',serif;font-size:1.15rem;color:var(--gold2)}
-.logo-text p{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}
-.header-stats{display:flex;gap:1.2rem}
-.stat{text-align:center}
-.stat-n{font-family:'Playfair Display',serif;font-size:1.35rem;color:var(--gold);line-height:1}
-.stat-n.m{color:var(--moto2)}
-.stat-l{font-size:.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
-.toolbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:.65rem 2rem;display:flex;gap:.6rem;align-items:center;flex-wrap:wrap}
+:root{
+  --ink:#1a1714;--paper:#f5f2ec;--warm:#f0ead8;
+  --gold:#b8922a;--gold-lt:#d4a843;--gold-pale:#f7e8c4;
+  --moto:#c45c1a;--moto-lt:#e07535;
+  --accent:#2a4a3a;--muted:#8a8176;--border:#ddd5c0;
+  --card-bg:#faf7f2;--shadow:rgba(26,23,20,.10);
+}
+html{scroll-behavior:smooth}
+body{font-family:'Instrument Sans',sans-serif;background:var(--paper);color:var(--ink);min-height:100vh;overflow-x:hidden}
+
+/* HERO */
+.hero{position:relative;background:var(--ink);height:260px;overflow:hidden;display:flex;align-items:flex-end}
+.hero-bg{position:absolute;inset:0;background:url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1600&q=80') center/cover;opacity:.35;transition:opacity 1s}
+.hero-grain{position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.06'/%3E%3C/svg%3E");opacity:.5}
+.hero-content{position:relative;z-index:2;padding:2rem 2.5rem;width:100%}
+.hero-eyebrow{font-size:.65rem;letter-spacing:.25em;text-transform:uppercase;color:var(--gold-lt);margin-bottom:.5rem;opacity:0;animation:fadeUp .8s .2s forwards}
+.hero-title{font-family:'Cormorant Garamond',serif;font-size:clamp(2.2rem,5vw,3.5rem);font-weight:300;color:#f5f2ec;line-height:1;opacity:0;animation:fadeUp .8s .35s forwards}
+.hero-title em{font-style:italic;color:var(--gold-lt)}
+.hero-sub{font-size:.75rem;color:rgba(245,242,236,.5);margin-top:.5rem;letter-spacing:.08em;opacity:0;animation:fadeUp .8s .5s forwards}
+.hero-stats{display:flex;gap:2rem;position:absolute;bottom:2rem;right:2.5rem;z-index:2}
+.hstat{text-align:right;opacity:0;animation:fadeUp .8s .6s forwards}
+.hstat-n{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:300;line-height:1;color:#f5f2ec}
+.hstat-n.mo{color:var(--moto-lt)}
+.hstat-l{font-size:.6rem;text-transform:uppercase;letter-spacing:.15em;color:rgba(245,242,236,.45)}
+
+/* TOOLBAR */
+.toolbar{background:var(--ink);border-bottom:1px solid rgba(184,146,42,.25);padding:.75rem 2rem;display:flex;gap:.75rem;align-items:center;flex-wrap:wrap;position:sticky;top:0;z-index:200}
 .search-wrap{flex:1;min-width:180px;position:relative}
-.search-wrap input{width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:.45rem .9rem .45rem 2rem;border-radius:6px;font-size:.82rem;font-family:'DM Sans',sans-serif;outline:none}
-.search-wrap input:focus{border-color:var(--gold)}
-.search-wrap::before{content:'⌕';position:absolute;left:.65rem;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.95rem}
-.type-tabs{display:flex;gap:3px;background:var(--bg3);padding:3px;border-radius:8px;border:1px solid var(--border)}
-.tt{background:none;border:none;color:var(--muted);padding:.3rem .75rem;border-radius:5px;cursor:pointer;font-size:.78rem;font-family:'DM Sans',sans-serif;transition:.2s;white-space:nowrap}
+.search-wrap input{width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(184,146,42,.25);color:#f5f2ec;padding:.45rem 1rem .45rem 2.1rem;border-radius:2px;font-size:.8rem;font-family:'Instrument Sans',sans-serif;outline:none;transition:.2s}
+.search-wrap input::placeholder{color:rgba(245,242,236,.3)}
+.search-wrap input:focus{border-color:var(--gold-lt);background:rgba(255,255,255,.1)}
+.search-wrap::before{content:'⌕';position:absolute;left:.7rem;top:50%;transform:translateY(-50%);color:var(--gold);font-size:1rem}
+.type-tabs{display:flex;gap:2px;background:rgba(255,255,255,.05);padding:3px;border-radius:3px;border:1px solid rgba(184,146,42,.2)}
+.tt{background:none;border:none;color:rgba(245,242,236,.45);padding:.3rem .8rem;border-radius:2px;cursor:pointer;font-size:.75rem;font-family:'Instrument Sans',sans-serif;transition:.2s;white-space:nowrap;letter-spacing:.04em}
+.tt:hover{color:#f5f2ec}
 .tt.a-all{background:linear-gradient(135deg,var(--gold),var(--moto));color:#111;font-weight:500}
 .tt.a-car{background:var(--gold);color:#111;font-weight:500}
 .tt.a-moto{background:var(--moto);color:#fff;font-weight:500}
-.filter-btn{background:var(--bg3);border:1px solid var(--border);color:var(--muted);padding:.4rem .8rem;border-radius:6px;cursor:pointer;font-size:.78rem;font-family:'DM Sans',sans-serif;transition:.2s;white-space:nowrap}
-.filter-btn:hover,.filter-btn.active{border-color:var(--gold);color:var(--gold)}
-.view-toggle{display:flex;gap:3px;background:var(--bg3);padding:3px;border-radius:6px;border:1px solid var(--border)}
-.vb{background:none;border:none;color:var(--muted);padding:.28rem .55rem;border-radius:4px;cursor:pointer;font-size:.82rem;transition:.2s}
+.filter-btn{background:none;border:1px solid rgba(184,146,42,.2);color:rgba(245,242,236,.45);padding:.35rem .75rem;border-radius:2px;cursor:pointer;font-size:.72rem;font-family:'Instrument Sans',sans-serif;transition:.2s;white-space:nowrap;letter-spacing:.04em}
+.filter-btn:hover,.filter-btn.active{border-color:var(--gold-lt);color:var(--gold-lt)}
+.sort-sel{background:rgba(255,255,255,.07);border:1px solid rgba(184,146,42,.2);color:rgba(245,242,236,.7);padding:.38rem .75rem;border-radius:2px;font-size:.75rem;font-family:'Instrument Sans',sans-serif;outline:none;cursor:pointer}
+.sort-sel option{background:var(--ink)}
+.view-toggle{display:flex;gap:2px;background:rgba(255,255,255,.05);padding:3px;border-radius:3px;border:1px solid rgba(184,146,42,.2)}
+.vb{background:none;border:none;color:rgba(245,242,236,.4);padding:.28rem .55rem;border-radius:2px;cursor:pointer;font-size:.85rem;transition:.2s}
 .vb.active{background:var(--gold);color:#111}
-.sort-sel{background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:.4rem .8rem;border-radius:6px;font-size:.78rem;font-family:'DM Sans',sans-serif;outline:none;cursor:pointer}
-main{padding:1.25rem 2rem;max-width:1400px;margin:0 auto}
-#mv{display:none;height:480px;border-radius:10px;border:1px solid var(--border);overflow:hidden;margin-bottom:1.25rem;position:relative}
+
+/* MAIN */
+main{padding:1.75rem 2rem;max-width:1380px;margin:0 auto}
+.ri{font-size:.75rem;color:var(--muted);margin-bottom:1.25rem;letter-spacing:.04em;padding-bottom:.75rem;border-bottom:1px solid var(--border)}
+
+/* MAP */
+#mv{display:none;height:460px;border-radius:4px;border:1px solid var(--border);overflow:hidden;margin-bottom:1.5rem;position:relative;box-shadow:0 4px 24px var(--shadow)}
 #mv.active{display:block}
-.map-legend{position:absolute;bottom:1rem;left:1rem;background:rgba(15,14,12,.88);border:1px solid var(--border);border-radius:8px;padding:.6rem .9rem;z-index:500;font-size:.72rem;display:flex;flex-direction:column;gap:.35rem}
-.ml-item{display:flex;align-items:center;gap:.45rem;color:var(--text)}
-.dot{width:11px;height:11px;border-radius:50%;display:inline-block}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:.9rem}
-.card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:1.1rem;cursor:pointer;transition:.22s;position:relative;overflow:hidden}
-.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
-.card.car::before{background:linear-gradient(90deg,var(--gold),transparent)}
-.card.moto::before{background:linear-gradient(90deg,var(--moto),transparent)}
-.card.car:hover{border-color:var(--gold);transform:translateY(-2px)}
-.card.moto:hover{border-color:var(--moto);transform:translateY(-2px)}
-.card-type{display:inline-flex;align-items:center;gap:.25rem;font-size:.63rem;font-weight:600;letter-spacing:.09em;text-transform:uppercase;padding:.13rem .5rem;border-radius:3px;margin-bottom:.35rem}
-.card-type.car{background:rgba(201,168,76,.15);color:var(--gold);border:1px solid rgba(201,168,76,.3)}
-.card-type.moto{background:rgba(224,123,42,.15);color:var(--moto2);border:1px solid rgba(224,123,42,.3)}
-.card-date{font-size:.7rem;color:var(--muted);margin-bottom:.35rem}
-.card-title{font-family:'Playfair Display',serif;font-size:.95rem;color:var(--cream);line-height:1.3;margin-bottom:.5rem}
-.card-loc{font-size:.75rem;color:var(--muted);margin-bottom:.4rem}
-.card-meta{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.6rem}
-.badge{font-size:.68rem;padding:.18rem .55rem;border-radius:4px;font-weight:500}
-.bt{background:rgba(201,168,76,.15);color:var(--gold);border:1px solid rgba(201,168,76,.3)}
-.bp{background:rgba(74,124,89,.2);color:#7ec89a;border:1px solid rgba(74,124,89,.4)}
-.bp.paid{background:rgba(124,74,74,.2);color:#e89a9a;border:1px solid rgba(124,74,74,.4)}
-.bd.close{background:rgba(74,124,89,.2);color:#7ec89a;border:1px solid rgba(74,124,89,.4)}
-.bd.far{background:rgba(124,74,74,.2);color:#e89a9a;border:1px solid rgba(124,74,74,.4)}
-.ri{color:var(--muted);font-size:.8rem;margin-bottom:.9rem}
-.empty{text-align:center;padding:3rem;color:var(--muted)}
-.ov{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.82);z-index:1000;display:none;align-items:center;justify-content:center;padding:1rem}
+.map-legend{position:absolute;bottom:1rem;left:1rem;background:rgba(245,242,236,.94);border:1px solid var(--border);border-radius:4px;padding:.65rem 1rem;z-index:500;font-size:.7rem;display:flex;flex-direction:column;gap:.35rem;backdrop-filter:blur(8px)}
+.ml-item{display:flex;align-items:center;gap:.5rem;color:var(--ink)}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+
+/* GRID */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:1.25rem}
+
+/* CARD */
+.card{background:var(--card-bg);border:1px solid var(--border);border-radius:4px;overflow:hidden;cursor:pointer;transition:transform .25s,box-shadow .25s,border-color .25s;animation:cardIn .5s backwards}
+.card:hover{transform:translateY(-4px);box-shadow:0 12px 32px var(--shadow)}
+.card.car:hover{border-color:var(--gold)}
+.card.moto:hover{border-color:var(--moto)}
+.card-img{height:140px;overflow:hidden;position:relative;background:var(--warm)}
+.card-img img{width:100%;height:100%;object-fit:cover;transition:transform .5s;display:block}
+.card:hover .card-img img{transform:scale(1.06)}
+.card-img-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:2.5rem;opacity:.25}
+.card-stripe{height:2px;background:var(--gold)}
+.card.moto .card-stripe{background:var(--moto)}
+.card-body{padding:1rem 1.1rem 1rem}
+.card-meta-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:.4rem}
+.card-type{font-size:.6rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase;padding:.12rem .5rem;border-radius:2px}
+.card-type.car{background:var(--gold-pale);color:var(--gold)}
+.card-type.moto{background:#fdebd0;color:var(--moto)}
+.card-date{font-size:.68rem;color:var(--muted);letter-spacing:.04em}
+.card-title{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:400;color:var(--ink);line-height:1.3;margin-bottom:.35rem}
+.card-loc{font-size:.72rem;color:var(--muted);margin-bottom:.65rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card-badges{display:flex;gap:.35rem;flex-wrap:wrap}
+.badge{font-size:.65rem;padding:.15rem .5rem;border-radius:2px;font-weight:400}
+.bt{background:var(--gold-pale);color:var(--gold)}
+.bp{background:#e8f2ea;color:#3a7a4a;border:1px solid #c5dfc8}
+.bp.paid{background:#f8ecea;color:#8a3030;border:1px solid #dfc5c5}
+.bd.close{background:#e8f2ea;color:#3a7a4a;border:1px solid #c5dfc8}
+.bd.far{background:#f5f2ec;color:var(--muted);border:1px solid var(--border)}
+
+/* MODAL */
+.ov{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(26,23,20,.7);z-index:1000;display:none;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(4px)}
 .ov.open{display:flex}
-.modal{background:var(--bg2);border:1px solid var(--border);border-radius:12px;max-width:580px;width:100%;max-height:90vh;overflow-y:auto;padding:1.75rem;position:relative}
-.mc{position:absolute;top:.85rem;right:.85rem;background:none;border:1px solid var(--border);color:var(--muted);width:28px;height:28px;border-radius:6px;cursor:pointer;font-size:.9rem}
-.mtype{display:inline-flex;align-items:center;gap:.35rem;font-size:.72rem;font-weight:600;letter-spacing:.09em;text-transform:uppercase;padding:.18rem .65rem;border-radius:4px;margin-bottom:.45rem}
-.mtype.car{background:rgba(201,168,76,.15);color:var(--gold);border:1px solid rgba(201,168,76,.3)}
-.mtype.moto{background:rgba(224,123,42,.15);color:var(--moto2);border:1px solid rgba(224,123,42,.3)}
-.mdate{font-size:.78rem;color:var(--muted);margin-bottom:.45rem}
-.mtitle{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--cream);margin-bottom:.9rem}
-.msec{border-top:1px solid var(--border);padding-top:.65rem;margin-top:.65rem}
-.mlabel{font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.22rem}
-.mval{font-size:.88rem;color:var(--text);line-height:1.5}
-.mdesc{font-size:.83rem;color:var(--muted);line-height:1.6;white-space:pre-line}
-.gcbtn{display:inline-flex;align-items:center;gap:.45rem;padding:.55rem 1.1rem;border-radius:6px;text-decoration:none;font-size:.83rem;font-weight:500;margin-top:.9rem}
-.gcbtn.car{background:var(--gold);color:#111}
+.modal{background:var(--card-bg);border:1px solid var(--border);border-radius:4px;max-width:600px;width:100%;max-height:90vh;overflow-y:auto;position:relative;animation:modalIn .3s}
+.modal-img{height:200px;overflow:hidden;position:relative;background:var(--warm)}
+.modal-img img{width:100%;height:100%;object-fit:cover}
+.modal-img-ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:4rem;opacity:.2}
+.modal-stripe{height:3px}
+.modal-stripe.car{background:var(--gold)}
+.modal-stripe.moto{background:var(--moto)}
+.modal-content{padding:1.5rem 1.75rem 1.75rem}
+.mc{position:absolute;top:1rem;right:1rem;background:rgba(26,23,20,.5);border:none;color:#f5f2ec;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:.9rem;z-index:10;transition:.2s}
+.mc:hover{background:var(--ink)}
+.mtype{display:inline-flex;align-items:center;gap:.3rem;font-size:.65rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase;padding:.15rem .6rem;border-radius:2px;margin-bottom:.5rem}
+.mtype.car{background:var(--gold-pale);color:var(--gold)}
+.mtype.moto{background:#fdebd0;color:var(--moto)}
+.mdate{font-size:.75rem;color:var(--muted);margin-bottom:.35rem;letter-spacing:.04em}
+.mtitle{font-family:'Cormorant Garamond',serif;font-size:1.7rem;font-weight:300;color:var(--ink);line-height:1.2;margin-bottom:1.1rem}
+.msec{border-top:1px solid var(--border);padding-top:.7rem;margin-top:.7rem}
+.mlabel{font-size:.63rem;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-bottom:.22rem}
+.mval{font-size:.88rem;color:var(--ink);line-height:1.5}
+.mdesc{font-size:.83rem;color:var(--muted);line-height:1.7;white-space:pre-line}
+.gcbtn{display:inline-flex;align-items:center;gap:.5rem;padding:.6rem 1.2rem;border-radius:2px;text-decoration:none;font-size:.8rem;font-weight:500;margin-top:1.1rem;letter-spacing:.04em;transition:.2s}
+.gcbtn.car{background:var(--gold);color:#fff}
+.gcbtn.car:hover{background:var(--gold-lt)}
 .gcbtn.moto{background:var(--moto);color:#fff}
-footer{text-align:center;padding:1.75rem;color:var(--muted);font-size:.72rem;border-top:1px solid var(--border);margin-top:1.75rem}
-@media(max-width:600px){header{flex-direction:column}.header-stats{gap:.9rem}main{padding:1rem}.toolbar{padding:.65rem 1rem}}
+.gcbtn.moto:hover{background:var(--moto-lt)}
+.empty{text-align:center;padding:4rem 2rem;color:var(--muted);font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-style:italic}
+
+/* FOOTER */
+footer{text-align:center;padding:2rem;color:var(--muted);font-size:.7rem;border-top:1px solid var(--border);letter-spacing:.06em;margin-top:2rem}
+footer a{color:var(--gold);text-decoration:none}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes cardIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes modalIn{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:scale(1)}}
+
+@media(max-width:600px){
+  .hero{height:220px}.hero-stats{display:none}
+  .hero-content{padding:1.5rem}
+  main{padding:1rem}
+  .toolbar{padding:.6rem 1rem}
+  .hero-title{font-size:2rem}
+}
 </style>
 </head>
 <body>
-<header>
-  <div class="logo">
-    <div class="logo-icon">🏎</div>
-    <div class="logo-text">
-      <h1>Rassemblements 2026</h1>
-      <p>Voitures &amp; Motos · Belgique</p>
-    </div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-bg" id="heroBg"></div>
+  <div class="hero-grain"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">Belgique &amp; environs · 2026</div>
+    <div class="hero-title">Rassemblements<br><em>Ancêtres</em></div>
+    <div class="hero-sub">Voitures classiques &amp; Motos historiques</div>
   </div>
-  <div class="header-stats">
-    <div class="stat"><div class="stat-n" id="s-tot">-</div><div class="stat-l">total</div></div>
-    <div class="stat"><div class="stat-n" id="s-car">-</div><div class="stat-l">🚗 voitures</div></div>
-    <div class="stat"><div class="stat-n m" id="s-moto">-</div><div class="stat-l">🏍️ motos</div></div>
-    <div class="stat"><div class="stat-n" id="s-free">-</div><div class="stat-l">gratuits</div></div>
+  <div class="hero-stats">
+    <div class="hstat"><div class="hstat-n" id="s-tot">—</div><div class="hstat-l">événements</div></div>
+    <div class="hstat"><div class="hstat-n" id="s-car">—</div><div class="hstat-l">🚗 voitures</div></div>
+    <div class="hstat"><div class="hstat-n mo" id="s-moto">—</div><div class="hstat-l">🏍️ motos</div></div>
+    <div class="hstat"><div class="hstat-n" id="s-free">—</div><div class="hstat-l">gratuits</div></div>
   </div>
-</header>
+</div>
+
+<!-- TOOLBAR -->
 <div class="toolbar">
-  <div class="search-wrap"><input type="text" id="search" placeholder="Rechercher..."></div>
+  <div class="search-wrap"><input type="text" id="search" placeholder="Rechercher un événement, une ville..."></div>
   <div class="type-tabs">
-    <button class="tt a-all" data-type="all">🚗🏍️ Tous</button>
+    <button class="tt a-all" data-type="all">Tous</button>
     <button class="tt" data-type="car">🚗 Voitures</button>
     <button class="tt" data-type="moto">🏍️ Motos</button>
   </div>
@@ -117,41 +180,86 @@ footer{text-align:center;padding:1.75rem;color:var(--muted);font-size:.72rem;bor
   <button class="filter-btn" data-f="gratuit">Gratuits</button>
   <button class="filter-btn" data-f="proche">≤ 50 km</button>
   <button class="filter-btn" data-f="avr">Avril</button>
-  <button class="filter-btn" data-f="mai">Mai+</button>
+  <button class="filter-btn" data-f="mai">Mai +</button>
   <div class="view-toggle">
     <button class="vb active" data-v="grid">⊞</button>
     <button class="vb" data-v="map">◉</button>
   </div>
 </div>
+
+<!-- MAIN -->
 <main>
   <p class="ri" id="ri"></p>
   <div id="mv">
     <div class="map-legend">
-      <div class="ml-item"><span class="dot" style="background:#c9a84c"></span>Voiture ancêtre</div>
-      <div class="ml-item"><span class="dot" style="background:#e07b2a"></span>Moto</div>
-      <div class="ml-item"><span class="dot" style="background:#7ec89a"></span>Gratuit</div>
+      <div class="ml-item"><span class="dot" style="background:#b8922a"></span>Voiture ancêtre</div>
+      <div class="ml-item"><span class="dot" style="background:#c45c1a"></span>Moto</div>
+      <div class="ml-item"><span class="dot" style="background:#3a7a4a"></span>Gratuit</div>
     </div>
   </div>
   <div class="grid" id="grid"></div>
-  <div class="empty" id="empty" style="display:none">Aucun événement trouvé</div>
+  <div class="empty" id="empty" style="display:none">Aucun événement ne correspond à votre recherche.</div>
 </main>
+
+<!-- MODAL -->
 <div class="ov" id="modal">
   <div class="modal">
     <button class="mc" id="mc">✕</button>
-    <div class="mtype car" id="m-type">🚗 Voiture</div>
-    <div class="mdate" id="m-date"></div>
-    <div class="mtitle" id="m-title"></div>
-    <div class="msec"><div class="mlabel">📍 Lieu</div><div class="mval" id="m-loc"></div></div>
-    <div class="msec" id="m-tsec"><div class="mlabel">🕐 Horaire</div><div class="mval" id="m-time"></div></div>
-    <div class="msec"><div class="mlabel">💶 Prix</div><div class="mval" id="m-price"></div></div>
-    <div class="msec"><div class="mlabel">📏 Distance depuis Waterloo</div><div class="mval" id="m-dist"></div></div>
-    <div class="msec" id="m-dsec"><div class="mlabel">ℹ️ Détails</div><div class="mdesc" id="m-desc"></div></div>
-    <a id="m-gcal" class="gcbtn car" href="#" target="_blank">📅 Voir dans Google Calendar</a>
+    <div class="modal-img"><div class="modal-img-ph" id="m-img-ph">🏎</div><img id="m-img" src="" alt="" style="display:none"></div>
+    <div class="modal-stripe car" id="m-stripe"></div>
+    <div class="modal-content">
+      <div class="mtype car" id="m-type">🚗 Voiture</div>
+      <div class="mdate" id="m-date"></div>
+      <div class="mtitle" id="m-title"></div>
+      <div class="msec"><div class="mlabel">📍 Lieu</div><div class="mval" id="m-loc"></div></div>
+      <div class="msec" id="m-tsec"><div class="mlabel">🕐 Horaire</div><div class="mval" id="m-time"></div></div>
+      <div class="msec"><div class="mlabel">💶 Prix</div><div class="mval" id="m-price"></div></div>
+      <div class="msec"><div class="mlabel">📏 Distance depuis Waterloo</div><div class="mval" id="m-dist"></div></div>
+      <div class="msec" id="m-dsec"><div class="mlabel">ℹ️ Détails</div><div class="mdesc" id="m-desc"></div></div>
+      <a id="m-gcal" class="gcbtn car" href="#" target="_blank">📅 Voir dans Google Calendar</a>
+    </div>
   </div>
 </div>
-<footer>Mis à jour le 19/03/2026 · Sources : Google Calendar "Rassemblement ancetres" &amp; "Rassemblements motos" · Waterloo comme référence</footer>
+
+<footer>
+  Mis à jour le 19/03/2026 · Sources : Google Calendar · 
+  <a href="https://cgoudaill.github.io/rassemblements-ancetres" target="_blank">cgoudaill.github.io/rassemblements-ancetres</a>
+</footer>
+
 <script>
 const W=[50.7142,4.3960];
+
+// Images Unsplash par catégorie (libres de droits)
+const IMG_CAR=[
+  'https://images.unsplash.com/photo-1592198084033-aade902d1aae?w=600&q=75',
+  'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=600&q=75',
+  'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=600&q=75',
+  'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=600&q=75',
+  'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=75',
+  'https://images.unsplash.com/photo-1449130809295-4c4dde7a3a6a?w=600&q=75',
+];
+const IMG_MOTO=[
+  'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=75',
+  'https://images.unsplash.com/photo-1558981806-ec527fa84c39?w=600&q=75',
+  'https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?w=600&q=75',
+  'https://images.unsplash.com/photo-1609630875171-b1321377ee65?w=600&q=75',
+];
+function getImg(e,i){return e.t==='moto'?IMG_MOTO[i%IMG_MOTO.length]:IMG_CAR[i%IMG_CAR.length]}
+
+// Hero slideshow
+const heroBgs=[
+  'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=1600&q=80',
+  'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1600&q=80',
+  'https://images.unsplash.com/photo-1592198084033-aade902d1aae?w=1600&q=80',
+];
+let hIdx=0;
+setInterval(()=>{
+  hIdx=(hIdx+1)%heroBgs.length;
+  const el=document.getElementById('heroBg');
+  el.style.opacity=0;
+  setTimeout(()=>{el.style.backgroundImage=`url('${heroBgs[hIdx]}')`;el.style.opacity='.35';},600);
+},5000);
+
 const CARS=[
   {t:'car',title:'Les 2 Rives Ourthe – Cobra Racing',date:'2026-04-03',time:'20:30',loc:'Quai de l\'Ourthe 12, 4170 Comblain-au-Pont',desc:'Rallye navigation 3 catégories\nPrix : 35€/équipage',price:'35€/équipage',coords:[50.481,5.586],gcal:'https://www.google.com/calendar/event?eid=YzhrOWk4cjFzN2dmNDJiZzR2ZnFwN2I3MmcgODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
   {t:'car',title:'24ème Bourse Véhicules Anciens – Ath',date:'2026-04-04',time:'',loc:'Hall du CEVA, 7800 Ath',desc:'Sam 13h-18h / Dim 10h-17h\nPrix : 5€',price:'5€',coords:[50.630,3.777],gcal:'https://www.google.com/calendar/event?eid=dWMzdjkzamhvZTdvYmtocW9rZmRuZHZnazggODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
@@ -164,78 +272,76 @@ const CARS=[
   {t:'car',title:'3ème Ronde du Pays d\'Opale',date:'2026-04-11',time:'08:00',loc:'Ardres, France',desc:'Organisé par Histo Racing Team\nPrix : Non précisé',price:'Non précisé',coords:[50.860,1.990],gcal:'https://www.google.com/calendar/event?eid=Y2pwdjFvNTRrM3Nzbmt1am1lbW1rNm1qZDAgODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
   {t:'car',title:'Old Young Timer HELHa – 4ème édition',date:'2026-04-11',time:'09:00',loc:'Chaussée de Binche 159, 7000 Mons',desc:'Exposition & BBQ Oldtimers & Youngtimers\nPrix : 5€',price:'5€',coords:[50.454,3.952],gcal:'https://www.google.com/calendar/event?eid=M25jZWdrYjE1bDluMXMxZG82OHV2bWxoMmMgODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
   {t:'car',title:'Ballade des Trois Communes',date:'2026-04-11',time:'10:00',loc:'Café des Pêcheurs, 7640 Péronne',desc:'Balade 40km max 80 participants\nPrix : 20€',price:'20€',coords:[50.633,3.551],gcal:'https://www.google.com/calendar/event?eid=dGZhbGszZXA5MmgxZWk3N2hzbDNkdWF1ZzggODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
-  {t:'car',title:'Truck\'Expo Arras – 4ème édition',date:'2026-04-11',time:'11:00',loc:'Rue Hans Geiger, 62000 Arras, France',desc:'Camions, animations, restauration\nPrix : 3€',price:'3€',coords:[50.291,2.777],gcal:'https://www.google.com/calendar/event?eid=M2o2YjkzbDVhdnM5a29xOTVtcGRpb2lhMnMgODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
   {t:'car',title:'Harmignies – Concentration Voitures & Vespas',date:'2026-04-11',time:'11:00',loc:'Salle Calva, 7022 Harmignies',desc:'Au profit du Télévie\nPrix : 10€/pers',price:'10€/pers.',coords:[50.412,3.967],gcal:'https://www.google.com/calendar/event?eid=dDRiMWdlbGJobGo2MGhyMXVhYzk0aXAwczggODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
   {t:'car',title:'Auto-Rétro Gembloux 2026',date:'2026-04-12',time:'',loc:'Ferme de l\'Abbaye de Gembloux',desc:'Rassemblement véhicules anciens\nPrix : Gratuit',price:'Gratuit',coords:[50.561,4.711],gcal:'https://www.google.com/calendar/event?eid=ZHZudGkxYnY4a3EyZmU1ajV2cjFmdTJsZTQgODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
   {t:'car',title:'Rallye Touristique de l\'Abbaye d\'Aulne',date:'2026-04-12',time:'08:00',loc:'Leernes, 6142',desc:'Navigation ludique roadbook\nPrix : Non précisé',price:'Non précisé',coords:[50.360,4.457],gcal:'https://www.google.com/calendar/event?eid=NDk0bDI3M211dHBrcGxlM2RqdmprNGd0a2cgODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
   {t:'car',title:'Balade des Prés Verts – Véhicules Ancêtres',date:'2026-04-12',time:'08:00',loc:'Départ Melreux, 6990 Hotton',desc:'Véhicules +30 ans\nPrix : 25€/pers',price:'25€/pers.',coords:[50.266,5.446],gcal:'https://www.google.com/calendar/event?eid=OTZjZmtkMzl2NnM1bTZqMDJlZ2UyN2FpMGsgODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
   {t:'car',title:'Gembloux Autos-Rétro',date:'2026-04-12',time:'08:30',loc:'Abbaye de Floreffe, 5150 Floreffe',desc:'Départ 9h30 ~100km\nPrix : 60€/pilote',price:'60€/pilote',coords:[50.429,4.758],gcal:'https://www.google.com/calendar/event?eid=dnBqMDZsOWNoamY1NWcwNGl0aGs4MW1ham8gODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
   {t:'car',title:'Mini Trois Bornes – Balade Hautes-Fagnes',date:'2026-04-12',time:'09:00',loc:'Lac de la Gileppe, Jalhay',desc:'Mini ~150km\nPrix : 40-45€',price:'40-45€',coords:[50.539,5.976],gcal:'https://www.google.com/calendar/event?eid=djIxMWF1azhsdjgxdmUxbHVrc3IxbWJ1czAgODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
-  {t:'car',title:'Dour Auto Rétro (avril)',date:'2026-04-12',time:'10:00',loc:'Grand Place de Dour',desc:'Oldtimers & Youngtimers\nPrix : Gratuit',price:'Gratuit',coords:[50.399,3.779],gcal:'https://www.google.com/calendar/event?eid=M2cyZjhqcGxpaGlzMXE2Nm9pM2duc3RjcmNfMjAyNjA0MTJUMDgwMDAwWiA4MzhmZjFhNzE5ZDUwN2FhNTk2ODVlZWQ1MDExYTgxYTc3Yjg3NjFkNzM4ZTQwMzI3ZDc4NDQ0ZjNhMGU2NTU5QGc'},
+  {t:'car',title:'Dour Auto Rétro',date:'2026-04-12',time:'10:00',loc:'Grand Place de Dour',desc:'Oldtimers & Youngtimers · Chaque 2ème dim. du mois\nPrix : Gratuit',price:'Gratuit',coords:[50.399,3.779],gcal:'https://www.google.com/calendar/event?eid=M2cyZjhqcGxpaGlzMXE2Nm9pM2duc3RjcmNfMjAyNjA0MTJUMDgwMDAwWiA4MzhmZjFhNzE5ZDUwN2FhNTk2ODVlZWQ1MDExYTgxYTc3Yjg3NjFkNzM4ZTQwMzI3ZDc4NDQ0ZjNhMGU2NTU5QGc'},
   {t:'car',title:'Meeting Car Saint-Ghislain',date:'2026-04-12',time:'10:00',loc:'Domaine des Aulnoyes, 7330 Saint-Ghislain',desc:'Exposant 10€ · Visiteur 2€',price:'2-10€',coords:[50.455,3.819],gcal:'https://www.google.com/calendar/event?eid=ZDdtYjhuZWQzZWlkYWdhaDNkcjQ5bTB0NzggODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
   {t:'car',title:'Balade de Printemps du Binocle Club',date:'2026-04-12',time:'11:00',loc:'Rue d\'Houdeng 199, 7070 Le Roeulx',desc:'PDJ + musée + restaurant\nPrix : 60€/adulte',price:'60€',coords:[50.508,4.109],gcal:'https://www.google.com/calendar/event?eid=dnJmMjRhbWJ1anNwNWUzMGtlYTllaTg1a2sgODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
   {t:'car',title:'4e Ronde des Vallées',date:'2026-04-12',time:'13:00',loc:'Groupe Autosphère, 6840 Neufchâteau',desc:'Roadster/Ancêtre/GT\nPrix : 55€/voiture',price:'55€/voiture',coords:[49.849,5.425],gcal:'https://www.google.com/calendar/event?eid=cTJjY2o2cXA0ZTIzbDY5cmxuazE1M2lhMmcgODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
   {t:'car',title:'Balade des Potes – Week-end Stoumont',date:'2026-04-17',time:'',loc:'Route de l\'Amblève, 4987 Stoumont',desc:'17-19 avril · Camping, BBQ, Roadbook\nPrix : Non précisé',price:'Non précisé',coords:[50.401,5.803],gcal:'https://www.google.com/calendar/event?eid=OXJjZ2ZvdTFya2JtdnNhOG91NmV2MG9wbjQgODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
-  {t:'car',title:'7ème Classique du Trimard',date:'2026-04-18',time:'',loc:'Madonna, Langemark, Belgique',desc:'Rallye 2 jours (18-19 avril)\nPrix : Non précisé',price:'Non précisé',coords:[50.900,2.917],gcal:'https://www.google.com/calendar/event?eid=MXJpczB1cWx0bzJiMmtxaXJxMWYxZzg5ZDAgODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
+  {t:'car',title:'7ème Classique du Trimard',date:'2026-04-18',time:'',loc:'Madonna, Langemark',desc:'Rallye 2 jours (18-19 avril)\nPrix : Non précisé',price:'Non précisé',coords:[50.900,2.917],gcal:'https://www.google.com/calendar/event?eid=MXJpczB1cWx0bzJiMmtxaXJxMWYxZzg5ZDAgODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
   {t:'car',title:'14ème Rallye des Ploquettes',date:'2026-04-18',time:'08:00',loc:'École Polytechnique, 4800 Verviers',desc:'Autos +25 ans\nPrix : 35€/pers',price:'35€',coords:[50.589,5.865],gcal:'https://www.google.com/calendar/event?eid=ZHE1N2NuZ3NtZTUwYXBqNjZzbHYxcTc4bGMgODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
   {t:'car',title:'Boucles Li Crochon 2026',date:'2026-04-18',time:'08:45',loc:'Salle d\'Anjou, Denée (Maredsous)',desc:'Rallye 2 boucles 150-190km\nPrix : 70-100€/équipage',price:'70-100€/éq.',coords:[50.292,4.750],gcal:'https://www.google.com/calendar/event?eid=OW9iOXA3bDJ1dG4yZHJ2c2kwaWwzOXNkc2MgODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
-  {t:'car',title:'Rassemblement Good Old Cars – Frameries',date:'2026-04-19',time:'10:00',loc:'Frameries, Hainaut',desc:'Chaque 3ème dimanche du mois, mars à oct.\nVéhicules ancêtres min. 30 ans · Prix : Gratuit',price:'Gratuit',coords:[50.410,3.900],gcal:'https://www.google.com/calendar/event?eid=NWw1cDVvbHFhamVsb2VhN3E4dHNrajUwb3NfMjAyNjA0MTkgODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
+  {t:'car',title:'Good Old Cars – Frameries',date:'2026-04-19',time:'10:00',loc:'Frameries, Hainaut',desc:'Chaque 3ème dimanche du mois, mars à oct.\nPrix : Gratuit',price:'Gratuit',coords:[50.410,3.900],gcal:'https://www.google.com/calendar/event?eid=NWw1cDVvbHFhamVsb2VhN3E4dHNrajUwb3NfMjAyNjA0MTkgODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
   {t:'car',title:'15ème Rallye des Ancêtres – Carlsbourg',date:'2026-04-19',time:'08:00',loc:'Grand Rue 7, 6850 Carlsbourg',desc:'PDJ 8h · Repas 13h30\nPrix : 60-120€/équipage',price:'60-120€/éq.',coords:[49.953,5.235],gcal:'https://www.google.com/calendar/event?eid=MDNtcjltOTV0ODNvOHM2NWxuZWJ2dWUwMjQgODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
-  {t:'car',title:'6ème Gaume Rallye Télévie – Bellefontaine',date:'2026-04-19',time:'08:00',loc:'Bellefontaine, Belgique',desc:'Au profit du Télévie\nPrix : 30€/pers',price:'30€/pers.',coords:[49.702,5.380],gcal:'https://www.google.com/calendar/event?eid=NWd1cG92bHVndW9hYWZkcWhldTBkMHA0aGMgODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
+  {t:'car',title:'6ème Gaume Rallye Télévie',date:'2026-04-19',time:'08:00',loc:'Bellefontaine, Belgique',desc:'Au profit du Télévie\nPrix : 30€/pers',price:'30€/pers.',coords:[49.702,5.380],gcal:'https://www.google.com/calendar/event?eid=NWd1cG92bHVndW9hYWZkcWhldTBkMHA0aGMgODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
   {t:'car',title:'16ème Rallye Boucles Djobines – Mettet',date:'2026-04-19',time:'08:00',loc:'Place Saint Ghislain 2, 5640 Mettet',desc:'Boucle 140km\nPrix : 85€/équipage',price:'85€/éq.',coords:[50.325,4.661],gcal:'https://www.google.com/calendar/event?eid=bnZqNmowM3BpNGM2bGpnYzBjcXVoZnE2M2MgODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
   {t:'car',title:'Balade Matinales BeA – Wavre',date:'2026-04-19',time:'09:00',loc:'Mechanic Heritage, 1300 Wavre',desc:'Roadbook ~85km\nPrix : 20-25€',price:'20-25€',coords:[50.722,4.599],gcal:'https://www.google.com/calendar/event?eid=YThnNzFqcTM4dDAycTM0OGpyMWM3aGRlODggODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
-  {t:'car',title:'26ème Balade de Printemps Goodway',date:'2026-04-19',time:'09:00',loc:'Restaurant Gavius, Ans',desc:'Voitures de sport 2 roadbooks 110+112km\nPrix : 275€/pers',price:'275€/pers.',coords:[50.676,5.503],gcal:'https://www.google.com/calendar/event?eid=dTgwYm9xMGlrZjJ1MzBlaW01c3VtaWFuOG8gODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
-  {t:'car',title:'Voitures Rétro Wattrelos',date:'2026-04-19',time:'10:00',loc:'Musée Arts et Traditions, 59150 Wattrelos',desc:'Exposition rétro, animations\nPrix : Gratuit',price:'Gratuit',coords:[50.700,3.221],gcal:'https://www.google.com/calendar/event?eid=NHRxNmVuNGVnYnJkOTI0ZmNmYmVlY2ZydGcgODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
+  {t:'car',title:'26ème Balade de Printemps Goodway',date:'2026-04-19',time:'09:00',loc:'Restaurant Gavius, Ans',desc:'Voitures de sport · 2 roadbooks 110+112km\nPrix : 275€/pers',price:'275€/pers.',coords:[50.676,5.503],gcal:'https://www.google.com/calendar/event?eid=dTgwYm9xMGlrZjJ1MzBlaW01c3VtaWFuOG8gODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
   {t:'car',title:'11ème Rallye de Nivelles – Rotary',date:'2026-04-19',time:'11:00',loc:'Grand Place de Nivelles',desc:'Voitures +25 ans\nPrix : 175€/voiture',price:'175€/voiture',coords:[50.598,4.329],gcal:'https://www.google.com/calendar/event?eid=dmdhbHNxZ25pYnI2N3VkZ3A5Y2hkMmFoMjAgODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
-  {t:'car',title:'Rallye Touristique Inner Wheel Namur',date:'2026-04-25',time:'08:00',loc:'Domaine de l\'Escaille, Temploux',desc:'Balade + souper\nPrix : Non précisé',price:'Non précisé',coords:[50.473,4.761],gcal:'https://www.google.com/calendar/event?eid=dGt1bDcxNGF1czhocmRuOWg3a2dlaDVxc3MgODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
-  {t:'car',title:'Vive les Anciennes – Balade Télévie Harmignies',date:'2026-04-25',time:'',loc:'7022 Harmignies, Belgique',desc:'Balade voitures anciennes au profit du Télévie\nR4L-Club Belgique',price:'Non précisé',coords:[50.412,3.967],gcal:'https://www.google.com/calendar/event?eid=ODMwaXU4N2xmZDZkcG51YnNwOWQzZ3YxYmcgODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
+  {t:'car',title:'Vive les Anciennes – Télévie Harmignies',date:'2026-04-25',time:'',loc:'7022 Harmignies',desc:'Balade voitures anciennes · Au profit du Télévie\nR4L-Club Belgique',price:'Non précisé',coords:[50.412,3.967],gcal:'https://www.google.com/calendar/event?eid=ODMwaXU4N2xmZDZkcG51YnNwOWQzZ3YxYmcgODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
   {t:'car',title:'Rallye du Cœur et du Fair-Play – Télévie',date:'2026-04-25',time:'10:00',loc:'Etang de Hove, Horimetz',desc:'Au profit du Télévie\nPrix : 50€/voiture',price:'50€/voiture',coords:[50.559,3.787],gcal:'https://www.google.com/calendar/event?eid=Yjd0bmp1MzNuaGs0dmU2aDFyMHFoOGkxanMgODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
   {t:'car',title:'Balade pour Oldtimers Télévie Attert',date:'2026-04-26',time:'08:00',loc:'Attert, Belgique',desc:'~100km · Au profit Télévie\nPrix : 45€/pers',price:'45€/pers.',coords:[49.750,5.783],gcal:'https://www.google.com/calendar/event?eid=OXFkOTBrbGFuODgzNGttb2twbXJudmgzbWcgODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
-  {t:'car',title:'Balade Ancêtres & Voitures de Prestige – Héron',date:'2026-04-26',time:'08:00',loc:'Parking Hall Omnisport de Héron',desc:'130km\nPrix : 75€/équipage',price:'75€/éq.',coords:[50.548,5.053],gcal:'https://www.google.com/calendar/event?eid=bDlzdDdoMXQzNnNndmVmbXZ2dHE5anFxOXMgODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
+  {t:'car',title:'Balade Ancêtres & Prestige – Héron',date:'2026-04-26',time:'08:00',loc:'Hall Omnisport de Héron',desc:'130km\nPrix : 75€/équipage',price:'75€/éq.',coords:[50.548,5.053],gcal:'https://www.google.com/calendar/event?eid=bDlzdDdoMXQzNnNndmVmbXZ2dHE5anFxOXMgODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
   {t:'car',title:'5e Promenade Champêtre – Oldtimer Pré 1993',date:'2026-04-26',time:'09:00',loc:'Sam\'Suffit, 7600 Péruwelz',desc:'130km roadbook\nPrix : 35-38€',price:'35-38€',coords:[50.509,3.595],gcal:'https://www.google.com/calendar/event?eid=MDEwc3MydW10bXI2M29tZmw0OXBzY202OW8gODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
   {t:'car',title:'Rallye Génestin – Retour aux Sources',date:'2026-04-26',time:'09:00',loc:'Écomusée de l\'Avesnois, 59610 Fourmies',desc:'Voitures anciennes, concert\nPrix : 25-60€/équipage',price:'25-60€/éq.',coords:[50.018,4.056],gcal:'https://www.google.com/calendar/event?eid=Mm8ycXUxYTRpczNjbnI1OXRzNDJxb2hxaDQgODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
   {t:'car',title:'GustoRallye du Rotary – Welkenraedt',date:'2026-04-26',time:'09:00',loc:'L\'Enclume, 4840 Welkenraedt',desc:'Fun road ~120km\nPrix : 135€/équipage',price:'135€/éq.',coords:[50.658,5.968],gcal:'https://www.google.com/calendar/event?eid=M3Y1cmZiNmtzZW1wMzNicjJlNGJvYnU5ZDAgODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
   {t:'car',title:'American Spring Party Houffalize',date:'2026-04-26',time:'10:00',loc:'Centre ville, Houffalize',desc:'Meeting US Cars & Bikes\nPrix : Gratuit',price:'Gratuit',coords:[50.128,5.786],gcal:'https://www.google.com/calendar/event?eid=M2t0M2EzcHBiMG85dGkxbGUzNXRwaWtlMmMgODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
   {t:'car',title:'10ème Balade Route 63 – Aywaille',date:'2026-04-26',time:'10:00',loc:'Musée Route63, 4920 Aywaille',desc:'Aywaille–Recht–GD\nPrix : 60-120€',price:'60-120€',coords:[50.470,5.677],gcal:'https://www.google.com/calendar/event?eid=cm5pY29mdm8xM2o5OGRiNm00bW9kMzFobjQgODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
-  {t:'car',title:'Les Routes du Muguet – Rassemblement',date:'2026-05-01',time:'',loc:'Belgique',desc:'Rassemblement de voitures anciennes AutoRetroPair\nPrix : Non précisé',price:'Non précisé',coords:[50.5,4.5],gcal:'https://www.google.com/calendar/event?eid=Yms2dWxsNDJoNjVwNDFnZWQ2aWswM2FuMXMgODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
-  {t:'car',title:'Rassemblement Voitures Anciennes – Villers-devant-Orval',date:'2026-05-01',time:'',loc:'Villers-devant-Orval, Belgique',desc:'Rassemblement VAG et ancêtres\nPrix : Non précisé',price:'Non précisé',coords:[49.840,5.350],gcal:'https://www.google.com/calendar/event?eid=ZjhzMnBsbDg1ZG90bGc4M2cwcXYwdWEzOWsgODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
-  {t:'car',title:'Balade Oldtimers – Binche',date:'2026-05-01',time:'',loc:'Binche, Belgique',desc:'Balade avec roadbook pour voitures anciennes\nGastronomie et découverte des environs',price:'Non précisé',coords:[50.409,4.168],gcal:'https://www.google.com/calendar/event?eid=dW5uNWZlbmFzZW0xdnI3b2E2Yjltb2I2NGcgODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
+  {t:'car',title:'Balade Oldtimers – Binche',date:'2026-05-01',time:'',loc:'Binche, Belgique',desc:'Balade avec roadbook\nGastronomie et découverte',price:'Non précisé',coords:[50.409,4.168],gcal:'https://www.google.com/calendar/event?eid=dW5uNWZlbmFzZW0xdnI3b2E2Yjltb2I2NGcgODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
+  {t:'car',title:'Rassemblement VAG & Ancêtres – Villers-devant-Orval',date:'2026-05-01',time:'',loc:'Villers-devant-Orval',desc:'Rassemblement VAG et ancêtres\nPrix : Non précisé',price:'Non précisé',coords:[49.840,5.350],gcal:'https://www.google.com/calendar/event?eid=ZjhzMnBsbDg1ZG90bGc4M2cwcXYwdWEzOWsgODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
   {t:'car',title:'Bourse Oldtimer Libramont',date:'2026-05-02',time:'',loc:'Libramont, Belgique',desc:'Bourse d\'échange oldtimer\nPrix : Non précisé',price:'Non précisé',coords:[49.920,5.380],gcal:'https://www.google.com/calendar/event?eid=Z2ZkZzBpdmpjYTEzcmwyaTU5bjU4dnU3dm8gODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
-  {t:'car',title:'Balade des Legend Boucles – Bastogne',date:'2026-05-02',time:'',loc:'Bastogne, Belgique',desc:'Balade voitures anciennes ou modernes\nPlus belles routes de la région de Bastogne',price:'Non précisé',coords:[50.001,5.716],gcal:'https://www.google.com/calendar/event?eid=Z3RudW9jdGgyZGs0ajY5czZzaW81OG5mcjQgODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
-  {t:'car',title:'Mons Classic – Rassemblement mensuel (mai)',date:'2026-05-03',time:'10:00',loc:'Esplanade des Congrès, Mons',desc:'Véhicules ancêtres +30 ans\nPrix : Gratuit',price:'Gratuit',coords:[50.454,3.952],gcal:'https://www.google.com/calendar/event?eid=NGtycGJnZzc5aDI2cmM0OWx0bnBiMmZ2dDggODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
-  {t:'car',title:'Dour Auto Rétro (mai)',date:'2026-05-10',time:'10:00',loc:'Grand Place de Dour',desc:'Oldtimers & Youngtimers\nPrix : Gratuit',price:'Gratuit',coords:[50.399,3.779],gcal:'https://www.google.com/calendar/event?eid=M2cyZjhqcGxpaGlzMXE2Nm9pM2duc3RjcmNfMjAyNjA1MTBUMDgwMDAwWiA4MzhmZjFhNzE5ZDUwN2FhNTk2ODVlZWQ1MDExYTgxYTc3Yjg3NjFkNzM4ZTQwMzI3ZDc4NDQ0ZjNhMGU2NTU5QGc'},
-  {t:'car',title:'Rassemblement Good Old Cars – Frameries (mai)',date:'2026-05-17',time:'10:00',loc:'Frameries, Hainaut',desc:'Chaque 3ème dimanche du mois\nPrix : Gratuit',price:'Gratuit',coords:[50.410,3.900],gcal:'https://www.google.com/calendar/event?eid=NWw1cDVvbHFhamVsb2VhN3E4dHNrajUwb3NfMjAyNjA1MTcgODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
-  {t:'car',title:'Spa-Classic 2026 – 14e édition',date:'2026-05-22',time:'',loc:'Circuit de Spa-Francorchamps',desc:'+400 voitures historiques, 10 plateaux\nPrix : Billetterie en ligne',price:'Billetterie',coords:[50.437,5.971],gcal:'https://www.google.com/calendar/event?eid=NjEyM25kMWNpZWk0ZThxNXFmOHJ0dGRzYm8gODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
-  {t:'car',title:'STATIC – CARS – MédiaMarkt Waterloo (mai)',date:'2026-05-23',time:'19:30',loc:'Parking MédiaMarkt, 1420 Braine-l\'Alleud',desc:'Oldtimers, Youngtimers, Sportives\nPrix : Gratuit',price:'Gratuit',coords:[50.660,4.390],gcal:'https://www.google.com/calendar/event?eid=MGczOWt2b25hcXJpc2Q4MTc5N2lza2tmb2MgODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
-  {t:'car',title:'Salon Vintage & Rallye Oldtimer – Château de Tancremont',date:'2026-05-31',time:'',loc:'Château de Tancremont, Belgique',desc:'Salon Vintage en cadre exceptionnel\nPrix : Non précisé',price:'Non précisé',coords:[50.530,5.860],gcal:'https://www.google.com/calendar/event?eid=YTA0MmYxbXI3MjlobDZuMjBvN2UzbWIycjQgODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
-  {t:'car',title:'Grand Rassemblement Véhicules Ancêtres – Trooz',date:'2026-06-01',time:'',loc:'Trooz, Liège, Belgique',desc:'Véhicules ancêtres, d\'exception et de compétition\n4ème édition – Automobile Club de Trooz',price:'Non précisé',coords:[50.570,5.680],gcal:'https://www.google.com/calendar/event?eid=NDFjYjJpNjYyaGtpNDc5Z3RuaDFxNXQ2YTQgODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
-  {t:'car',title:'Dour Auto Rétro (juin)',date:'2026-06-14',time:'10:00',loc:'Grand Place de Dour',desc:'Oldtimers & Youngtimers\nPrix : Gratuit',price:'Gratuit',coords:[50.399,3.779],gcal:'https://www.google.com/calendar/event?eid=M2cyZjhqcGxpaGlzMXE2Nm9pM2duc3RjcmNfMjAyNjA2MTRUMDgwMDAwWiA4MzhmZjFhNzE5ZDUwN2FhNTk2ODVlZWQ1MDExYTgxYTc3Yjg3NjFkNzM4ZTQwMzI3ZDc4NDQ0ZjNhMGU2NTU5QGc'},
-  {t:'car',title:'Dour Auto Rétro (juillet)',date:'2026-07-12',time:'10:00',loc:'Grand Place de Dour',desc:'Oldtimers & Youngtimers\nPrix : Gratuit',price:'Gratuit',coords:[50.399,3.779],gcal:'https://www.google.com/calendar/event?eid=M2cyZjhqcGxpaGlzMXE2Nm9pM2duc3RjcmNfMjAyNjA3MTJUMDgwMDAwWiA4MzhmZjFhNzE5ZDUwN2FhNTk2ODVlZWQ1MDExYTgxYTc3Yjg3NjFkNzM4ZTQwMzI3ZDc4NDQ0ZjNhMGU2NTU5QGc'},
-  {t:'car',title:'Montée Historique du Maquisard – Theux',date:'2026-08-01',time:'',loc:'Theux, Belgique',desc:'Rallye automobile historique à Theux\nPrix : Non précisé',price:'Non précisé',coords:[50.530,5.820],gcal:'https://www.google.com/calendar/event?eid=cTUwZnY2M3I2YWwwaW9wZmE3dTJyaHV1djggODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
-  {t:'car',title:'Dour Auto Rétro (août)',date:'2026-08-09',time:'10:00',loc:'Grand Place de Dour',desc:'Oldtimers & Youngtimers\nPrix : Gratuit',price:'Gratuit',coords:[50.399,3.779],gcal:'https://www.google.com/calendar/event?eid=M2cyZjhqcGxpaGlzMXE2Nm9pM2duc3RjcmNfMjAyNjA4MDlUMDgwMDAwWiA4MzhmZjFhNzE5ZDUwN2FhNTk2ODVlZWQ1MDExYTgxYTc3Yjg3NjFkNzM4ZTQwMzI3ZDc4NDQ0ZjNhMGU2NTU5QGc'},
-  {t:'car',title:'Fête de la Moisson de Blaregnies – Voitures Anciennes',date:'2026-08-30',time:'',loc:'Blaregnies, Belgique',desc:'Balade de voitures anciennes\nlors de la Fête de la Moisson',price:'Non précisé',coords:[50.395,3.920],gcal:'https://www.google.com/calendar/event?eid=dWNzbGNnbWJjbmVqc21sZWNvbTRnZGhwZGcgODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
-  {t:'car',title:'Dour Auto Rétro (septembre)',date:'2026-09-13',time:'10:00',loc:'Grand Place de Dour',desc:'Oldtimers & Youngtimers\nPrix : Gratuit',price:'Gratuit',coords:[50.399,3.779],gcal:'https://www.google.com/calendar/event?eid=M2cyZjhqcGxpaGlzMXE2Nm9pM2duc3RjcmNfMjAyNjA5MTNUMDgwMDAwWiA4MzhmZjFhNzE5ZDUwN2FhNTk2ODVlZWQ1MDExYTgxYTc3Yjg3NjFkNzM4ZTQwMzI3ZDc4NDQ0ZjNhMGU2NTU5QGc'},
-  {t:'car',title:'Dour Auto Rétro (octobre)',date:'2026-10-11',time:'10:00',loc:'Grand Place de Dour',desc:'Oldtimers & Youngtimers\nPrix : Gratuit',price:'Gratuit',coords:[50.399,3.779],gcal:'https://www.google.com/calendar/event?eid=M2cyZjhqcGxpaGlzMXE2Nm9pM2duc3RjcmNfMjAyNjEwMTFUMDgwMDAwWiA4MzhmZjFhNzE5ZDUwN2FhNTk2ODVlZWQ1MDExYTgxYTc3Yjg3NjFkNzM4ZTQwMzI3ZDc4NDQ0ZjNhMGU2NTU5QGc'},
+  {t:'car',title:'Balade des Legend Boucles – Bastogne',date:'2026-05-02',time:'',loc:'Bastogne, Belgique',desc:'Balade sur les plus belles routes de la région\nPrix : Non précisé',price:'Non précisé',coords:[50.001,5.716],gcal:'https://www.google.com/calendar/event?eid=Z3RudW9jdGgyZGs0ajY5czZzaW81OG5mcjQgODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
+  {t:'car',title:'Mons Classic – Rassemblement mensuel',date:'2026-05-03',time:'10:00',loc:'Esplanade des Congrès, Mons',desc:'Véhicules ancêtres +30 ans\nPrix : Gratuit',price:'Gratuit',coords:[50.454,3.952],gcal:'https://www.google.com/calendar/event?eid=NGtycGJnZzc5aDI2cmM0OWx0bnBiMmZ2dDggODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
+  {t:'car',title:'Spa-Classic 2026 – 14e édition',date:'2026-05-22',time:'',loc:'Circuit de Spa-Francorchamps',desc:'+400 voitures historiques, 10 plateaux\nPrix : Billetterie',price:'Billetterie',coords:[50.437,5.971],gcal:'https://www.google.com/calendar/event?eid=NjEyM25kMWNpZWk0ZThxNXFmOHJ0dGRzYm8gODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
+  {t:'car',title:'STATIC – CARS – MédiaMarkt Waterloo',date:'2026-05-23',time:'19:30',loc:'Parking MédiaMarkt, 1420 Braine-l\'Alleud',desc:'Oldtimers, Youngtimers, Sportives\nPrix : Gratuit',price:'Gratuit',coords:[50.660,4.390],gcal:'https://www.google.com/calendar/event?eid=MGczOWt2b25hcXJpc2Q4MTc5N2lza2tmb2MgODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
+  {t:'car',title:'Salon Vintage & Rallye – Château de Tancremont',date:'2026-05-31',time:'',loc:'Château de Tancremont, Belgique',desc:'Salon Vintage en cadre exceptionnel\nPrix : Non précisé',price:'Non précisé',coords:[50.530,5.860],gcal:'https://www.google.com/calendar/event?eid=YTA0MmYxbXI3MjlobDZuMjBvN2UzbWIycjQgODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
+  {t:'car',title:'Grand Rassemblement Véhicules Ancêtres – Trooz',date:'2026-06-01',time:'',loc:'Trooz, Liège',desc:'Véhicules ancêtres, d\'exception et de compétition\n4ème édition',price:'Non précisé',coords:[50.570,5.680],gcal:'https://www.google.com/calendar/event?eid=NDFjYjJpNjYyaGtpNDc5Z3RuaDFxNXQ2YTQgODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
+  {t:'car',title:'Montée Historique du Maquisard – Theux',date:'2026-08-01',time:'',loc:'Theux, Belgique',desc:'Rallye automobile historique\nPrix : Non précisé',price:'Non précisé',coords:[50.530,5.820],gcal:'https://www.google.com/calendar/event?eid=cTUwZnY2M3I2YWwwaW9wZmE3dTJyaHV1djggODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
+  {t:'car',title:'Fête de la Moisson de Blaregnies',date:'2026-08-30',time:'',loc:'Blaregnies, Belgique',desc:'Balade de voitures anciennes\nlors de la Fête de la Moisson',price:'Non précisé',coords:[50.395,3.920],gcal:'https://www.google.com/calendar/event?eid=dWNzbGNnbWJjbmVqc21sZWNvbTRnZGhwZGcgODM4ZmYxYTcxOWQ1MDdhYTU5Njg1ZWVkNTAxMWE4MWE3N2I4NzYxZDczOGU0MDMyN2Q3ODQ0NGYzYTBlNjU1OUBn'},
 ];
 const MOTOS=[
-  {t:'moto',title:'Balade Moto MC Theux – Franchimont',date:'2026-04-13',time:'',loc:'Theux, Belgique',desc:'Balade moto organisée par le Moto Club Theux\nOuverte aux membres et amis du club',price:'Non précisé',coords:[50.530,5.820],gcal:'https://www.google.com/calendar/event?eid=OTMzNTg2aTd2dTM4a25tMDBmazQzOWpsc2MgODRiZTkxYzhhODJmYWYzZTg3YmRiNGFiYTA0YzBkNGFlMDNmMGE0ODVmYjRhMzJhYmRjMDBiYTY5YjQ5NjljMUBn'},
+  {t:'moto',title:'Balade Moto MC Theux – Franchimont',date:'2026-04-13',time:'',loc:'Theux, Belgique',desc:'Organisée par le Moto Club Theux\nOuverte aux membres et amis',price:'Non précisé',coords:[50.530,5.820],gcal:'https://www.google.com/calendar/event?eid=OTMzNTg2aTd2dTM4a25tMDBmazQzOWpsc2MgODRiZTkxYzhhODJmYWYzZTg3YmRiNGFiYTA0YzBkNGFlMDNmMGE0ODVmYjRhMzJhYmRjMDBiYTY5YjQ5NjljMUBn'},
   {t:'moto',title:'Moto Rétro Flémalle – Bourse motos ancêtres',date:'2026-05-01',time:'',loc:'Flémalle, Belgique',desc:'2ème plus grande bourse motos ancêtres en Wallonie\nModèles d\'exception, pièces de rechange',price:'Non précisé',coords:[50.577,5.452],gcal:'https://www.google.com/calendar/event?eid=bWQxajY5czUxZnE0aWI0NGtjbjZxZHEzamMgODRiZTkxYzhhODJmYWYzZTg3YmRiNGFiYTA0YzBkNGFlMDNmMGE0ODVmYjRhMzJhYmRjMDBiYTY5YjQ5NjljMUBn'},
-  {t:'moto',title:'Balade Moto Caritative – Ath',date:'2026-05-02',time:'',loc:'Rue de Pintamont 54, 7800 Ath',desc:'Balade moto caritative organisée par la Ville d\'Ath\nDans un esprit de solidarité et générosité',price:'Non précisé',coords:[50.630,3.777],gcal:'https://www.google.com/calendar/event?eid=dWJuMm82b3EyMW1wMjg5M2pmbmR0cHVjYXMgODRiZTkxYzhhODJmYWYzZTg3YmRiNGFiYTA0YzBkNGFlMDNmMGE0ODVmYjRhMzJhYmRjMDBiYTY5YjQ5NjljMUBn'},
-  {t:'moto',title:'La Montoise – Balade motos ancêtres',date:'2026-07-05',time:'',loc:'Mons, Belgique',desc:'3ème édition · Motos ancêtres ET actuelles\nOrganisé par le Royal Mons Auto Moto Club',price:'Non précisé',coords:[50.454,3.952],gcal:'https://www.google.com/calendar/event?eid=NDVyOG5wbzlpcjZkbHNkNHNzYjE3cjRrdGMgODRiZTkxYzhhODJmYWYzZTg3YmRiNGFiYTA0YzBkNGFlMDNmMGE0ODVmYjRhMzJhYmRjMDBiYTY5YjQ5NjljMUBn'},
-  {t:'moto',title:'Classic Bikes Chimay',date:'2026-07-18',time:'',loc:'Circuit de Chimay, Belgique',desc:'Compétition de motos classiques sur le circuit de Chimay',price:'Billetterie',coords:[50.046,4.326],gcal:'https://www.google.com/calendar/event?eid=aTBsZTdybG9tOGljYmtoMm02cnZrODlrN3MgODRiZTkxYzhhODJmYWYzZTg3YmRiNGFiYTA0YzBkNGFlMDNmMGE0ODVmYjRhMzJhYmRjMDBiYTY5YjQ5NjljMUBn'},
+  {t:'moto',title:'Balade Moto Caritative – Ath',date:'2026-05-02',time:'',loc:'Rue de Pintamont 54, 7800 Ath',desc:'Balade moto caritative · Ville d\'Ath\nSolidarité et générosité',price:'Non précisé',coords:[50.630,3.777],gcal:'https://www.google.com/calendar/event?eid=dWJuMm82b3EyMW1wMjg5M2pmbmR0cHVjYXMgODRiZTkxYzhhODJmYWYzZTg3YmRiNGFiYTA0YzBkNGFlMDNmMGE0ODVmYjRhMzJhYmRjMDBiYTY5YjQ5NjljMUBn'},
+  {t:'moto',title:'La Montoise – Balade motos ancêtres',date:'2026-07-05',time:'',loc:'Mons, Belgique',desc:'3ème édition · Motos ancêtres ET actuelles\nRoyal Mons Auto Moto Club',price:'Non précisé',coords:[50.454,3.952],gcal:'https://www.google.com/calendar/event?eid=NDVyOG5wbzlpcjZkbHNkNHNzYjE3cjRrdGMgODRiZTkxYzhhODJmYWYzZTg3YmRiNGFiYTA0YzBkNGFlMDNmMGE0ODVmYjRhMzJhYmRjMDBiYTY5YjQ5NjljMUBn'},
+  {t:'moto',title:'Classic Bikes Chimay',date:'2026-07-18',time:'',loc:'Circuit de Chimay, Belgique',desc:'Compétition de motos classiques\nMotos historiques en action',price:'Billetterie',coords:[50.046,4.326],gcal:'https://www.google.com/calendar/event?eid=aTBsZTdybG9tOGljYmtoMm02cnZrODlrN3MgODRiZTkxYzhhODJmYWYzZTg3YmRiNGFiYTA0YzBkNGFlMDNmMGE0ODVmYjRhMzJhYmRjMDBiYTY5YjQ5NjljMUBn'},
   {t:'moto',title:'Belgian Classic Trophy – Gedinne',date:'2026-08-01',time:'',loc:'Gedinne, Belgique',desc:'Compétition de motos classiques à Gedinne',price:'Billetterie',coords:[49.986,4.961],gcal:'https://www.google.com/calendar/event?eid=aGkyNWRmNXQwcGIyY3BjZXZzc3IzZ3N0OG8gODRiZTkxYzhhODJmYWYzZTg3YmRiNGFiYTA0YzBkNGFlMDNmMGE0ODVmYjRhMzJhYmRjMDBiYTY5YjQ5NjljMUBn'},
-  {t:'moto',title:'Bikers\'Festival 2026',date:'2026-08-15',time:'',loc:'Circuit de Spa-Francorchamps, 4970 Francorchamps',desc:'LE grand rassemblement moto de Belgique !\n+3000 essais, Grande Parade, Balade des 1000 Virages',price:'Billetterie',coords:[50.437,5.971],gcal:'https://www.google.com/calendar/event?eid=amVwdHRlc2ttN2lpdnYwZXViZ3FoYnEzcDggODRiZTkxYzhhODJmYWYzZTg3YmRiNGFiYTA0YzBkNGFlMDNmMGE0ODVmYjRhMzJhYmRjMDBiYTY5YjQ5NjljMUBn'},
-  {t:'moto',title:'Grande Balade Moto 80 – Mettet',date:'2026-08-30',time:'',loc:'Circuit de Mettet, Belgique',desc:'Grande Balade Moto 80 organisée à Mettet',price:'Non précisé',coords:[50.325,4.661],gcal:'https://www.google.com/calendar/event?eid=dmQ0MDgxZXNucTUydTk1aDRkOGcyb3AxNWMgODRiZTkxYzhhODJmYWYzZTg3YmRiNGFiYTA0YzBkNGFlMDNmMGE0ODVmYjRhMzJhYmRjMDBiYTY5YjQ5NjljMUBn'},
-  {t:'moto',title:'Grande Balade Moto Police Boraine',date:'2026-09-06',time:'',loc:'Dour, Belgique',desc:'Balade moto ouverte à toutes les marques\nOrganisée par la Police Boraine',price:'Gratuit',coords:[50.399,3.779],gcal:'https://www.google.com/calendar/event?eid=ZDVtb2k2bzFiOGxtMDU1dWdhMHRidmZ1MWMgODRiZTkxYzhhODJmYWYzZTg3YmRiNGFiYTA0YzBkNGFlMDNmMGE0ODVmYjRhMzJhYmRjMDBiYTY5YjQ5NjljMUBn'},
-  {t:'moto',title:'Balade Moto Salisses de Jalhay',date:'2026-09-26',time:'',loc:'Jalhay, Belgique',desc:'Balade moto organisée par le club Salisses de Jalhay\nJalhay Bike Tour (JBT) avec tombola',price:'Non précisé',coords:[50.539,5.976],gcal:'https://www.google.com/calendar/event?eid=MTF2dGs0NTNrYWdrMWdtNGc3M2k2dm12YmcgODRiZTkxYzhhODJmYWYzZTg3YmRiNGFiYTA0YzBkNGFlMDNmMGE0ODVmYjRhMzJhYmRjMDBiYTY5YjQ5NjljMUBn'},
+  {t:'moto',title:'Bikers\'Festival 2026 – Spa-Francorchamps',date:'2026-08-15',time:'',loc:'Circuit de Spa-Francorchamps',desc:'LE grand rassemblement moto de Belgique !\n+3000 essais, Grande Parade, Balade des 1000 Virages',price:'Billetterie',coords:[50.437,5.971],gcal:'https://www.google.com/calendar/event?eid=amVwdHRlc2ttN2lpdnYwZXViZ3FoYnEzcDggODRiZTkxYzhhODJmYWYzZTg3YmRiNGFiYTA0YzBkNGFlMDNmMGE0ODVmYjRhMzJhYmRjMDBiYTY5YjQ5NjljMUBn'},
+  {t:'moto',title:'Grande Balade Moto 80 – Mettet',date:'2026-08-30',time:'',loc:'Circuit de Mettet, Belgique',desc:'Grande Balade Moto 80 à Mettet',price:'Non précisé',coords:[50.325,4.661],gcal:'https://www.google.com/calendar/event?eid=dmQ0MDgxZXNucTUydTk1aDRkOGcyb3AxNWMgODRiZTkxYzhhODJmYWYzZTg3YmRiNGFiYTA0YzBkNGFlMDNmMGE0ODVmYjRhMzJhYmRjMDBiYTY5YjQ5NjljMUBn'},
+  {t:'moto',title:'Grande Balade Moto Police Boraine',date:'2026-09-06',time:'',loc:'Dour, Belgique',desc:'Ouverte à toutes les marques\nOrganisée par la Police Boraine',price:'Gratuit',coords:[50.399,3.779],gcal:'https://www.google.com/calendar/event?eid=ZDVtb2k2bzFiOGxtMDU1dWdhMHRidmZ1MWMgODRiZTkxYzhhODJmYWYzZTg3YmRiNGFiYTA0YzBkNGFlMDNmMGE0ODVmYjRhMzJhYmRjMDBiYTY5YjQ5NjljMUBn'},
+  {t:'moto',title:'Balade Moto Salisses de Jalhay',date:'2026-09-26',time:'',loc:'Jalhay, Belgique',desc:'Club Salisses de Jalhay · Jalhay Bike Tour\nTombola',price:'Non précisé',coords:[50.539,5.976],gcal:'https://www.google.com/calendar/event?eid=MTF2dGs0NTNrYWdrMWdtNGc3M2k2dm12YmcgODRiZTkxYzhhODJmYWYzZTg3YmRiNGFiYTA0YzBkNGFlMDNmMGE0ODVmYjRhMzJhYmRjMDBiYTY5YjQ5NjljMUBn'},
 ];
 const ALL=[...CARS,...MOTOS];
+
 function dist(c){const R=6371,a=Math.sin((c[0]-W[0])*Math.PI/360)**2+Math.cos(c[0]*Math.PI/180)*Math.cos(W[0]*Math.PI/180)*Math.sin((c[1]-W[1])*Math.PI/360)**2;return Math.round(R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a)))}
-function fmt(d){const m=["janv","févr","mars","avr","mai","juin","juil","août","sept","oct","nov","déc"],dy=["dim","lun","mar","mer","jeu","ven","sam"],dt=new Date(d+"T12:00:00");return`${dy[dt.getDay()]} ${dt.getDate()} ${m[dt.getMonth()]} 2026`}
+function fmt(d){const m=["janv.","févr.","mars","avr.","mai","juin","juil.","août","sept.","oct.","nov.","déc."],dy=["Dim","Lun","Mar","Mer","Jeu","Ven","Sam"],dt=new Date(d+"T12:00:00");return`${dy[dt.getDay()]} ${dt.getDate()} ${m[dt.getMonth()]}`}
 function isG(p){return p&&p.toLowerCase().includes('gratuit')}
 ALL.forEach(e=>{e.km=dist(e.coords)});
+
 let fil=[...ALL],view='grid',filt='all',tf='all',map=null;
-function stats(){document.getElementById('s-tot').textContent=ALL.length;document.getElementById('s-car').textContent=CARS.length;document.getElementById('s-moto').textContent=MOTOS.length;document.getElementById('s-free').textContent=ALL.filter(e=>isG(e.price)).length;}
+
+function stats(){
+  document.getElementById('s-tot').textContent=ALL.length;
+  document.getElementById('s-car').textContent=CARS.length;
+  document.getElementById('s-moto').textContent=MOTOS.length;
+  document.getElementById('s-free').textContent=ALL.filter(e=>isG(e.price)).length;
+}
+
 function render(){
   const q=document.getElementById('search').value.toLowerCase(),s=document.getElementById('sort').value;
   fil=ALL.filter(e=>{
@@ -251,49 +357,94 @@ function render(){
   else if(s==='dist')fil.sort((a,b)=>a.km-b.km);
   else if(s==='price')fil.sort((a,b)=>(isG(a.price)?0:1)-(isG(b.price)?0:1));
   const nc=fil.filter(e=>e.t==='car').length,nm=fil.filter(e=>e.t==='moto').length;
-  document.getElementById('ri').textContent=`${fil.length} événement${fil.length>1?'s':''} · ${nc} 🚗 · ${nm} 🏍️`;
+  document.getElementById('ri').textContent=`${fil.length} événement${fil.length>1?'s':''} · ${nc} voiture${nc>1?'s':''} · ${nm} moto${nm>1?'s':''}`;
   if(view==='grid')rGrid();else rMap();
 }
+
 function rGrid(){
   const g=document.getElementById('grid');g.innerHTML='';
   document.getElementById('empty').style.display=fil.length===0?'block':'none';
-  fil.forEach(e=>{
-    const c=document.createElement('div');c.className=`card ${e.t}`;
-    c.innerHTML=`<div class="card-type ${e.t}">${e.t==='car'?'🚗 Voiture':'🏍️ Moto'}</div><div class="card-date">${fmt(e.date)}</div><div class="card-title">${e.title}</div><div class="card-loc">📍 ${e.loc.length>52?e.loc.substr(0,49)+'...':e.loc}</div><div class="card-meta">${e.time?`<span class="badge bt">🕐 ${e.time}</span>`:''}<span class="badge ${isG(e.price)?'bp':'bp paid'}">${e.price}</span><span class="badge bd ${e.km<=50?'close':'far'}">📍 ${e.km} km</span></div>`;
-    c.onclick=()=>oModal(e);g.appendChild(c);
+  fil.forEach((e,i)=>{
+    const c=document.createElement('div');
+    c.className=`card ${e.t}`;
+    c.style.animationDelay=`${Math.min(i*40,400)}ms`;
+    const imgUrl=getImg(e,i);
+    c.innerHTML=`
+      <div class="card-img">
+        <img src="${imgUrl}" alt="${e.title}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="card-img-placeholder" style="display:none">${e.t==='moto'?'🏍️':'🚗'}</div>
+      </div>
+      <div class="card-stripe"></div>
+      <div class="card-body">
+        <div class="card-meta-top">
+          <span class="card-type ${e.t}">${e.t==='car'?'Voiture':'Moto'}</span>
+          <span class="card-date">${fmt(e.date)}</span>
+        </div>
+        <div class="card-title">${e.title}</div>
+        <div class="card-loc">📍 ${e.loc}</div>
+        <div class="card-badges">
+          ${e.time?`<span class="badge bt">${e.time}</span>`:''}
+          <span class="badge ${isG(e.price)?'bp':'bp paid'}">${e.price}</span>
+          <span class="badge bd ${e.km<=50?'close':'far'}">${e.km} km</span>
+        </div>
+      </div>`;
+    c.onclick=()=>oModal(e,imgUrl);
+    g.appendChild(c);
   });
 }
+
 function rMap(){
   document.getElementById('mv').classList.add('active');
-  if(!map){map=L.map('mv').setView([50.5,4.5],8);L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{attribution:'CartoDB'}).addTo(map);L.circleMarker(W,{radius:9,color:'#c9a84c',fillColor:'#c9a84c',fillOpacity:1}).addTo(map).bindPopup('<b>Waterloo</b>');}
+  if(!map){
+    map=L.map('mv').setView([50.5,4.5],8);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{attribution:'CartoDB'}).addTo(map);
+    L.circleMarker(W,{radius:10,color:'#b8922a',fillColor:'#b8922a',fillOpacity:1,weight:2}).addTo(map).bindPopup('<b>Waterloo</b> — référence');
+  }
   map.eachLayer(l=>{if(l instanceof L.CircleMarker&&l._popup&&!l._popup._content.includes('Waterloo'))map.removeLayer(l)});
-  fil.forEach(e=>{
-    const col=isG(e.price)?'#7ec89a':e.t==='moto'?'#e07b2a':e.km<=50?'#9ab0e8':'#c9a84c';
-    L.circleMarker(e.coords,{radius:e.t==='moto'?8:7,color:col,fillColor:col,fillOpacity:.85,weight:e.t==='moto'?2.5:1.5}).addTo(map).bindPopup(`<b style="color:#111">${e.t==='car'?'🚗':'🏍️'} ${e.title}</b><br>${fmt(e.date)}<br>${e.price}<br>${e.km} km de Waterloo`).on('click',()=>oModal(e));
+  fil.forEach((e,i)=>{
+    const col=isG(e.price)?'#3a7a4a':e.t==='moto'?'#c45c1a':e.km<=50?'#2a4a7a':'#b8922a';
+    const imgUrl=getImg(e,i);
+    L.circleMarker(e.coords,{radius:e.t==='moto'?9:8,color:col,fillColor:col,fillOpacity:.85,weight:2})
+      .addTo(map)
+      .bindPopup(`<div style="font-family:'Instrument Sans',sans-serif;min-width:180px"><b style="font-family:'Cormorant Garamond',serif;font-size:1rem">${e.title}</b><br><span style="font-size:.75rem;color:#666">${fmt(e.date)}</span><br><span style="font-size:.75rem">${e.price} · ${e.km} km</span></div>`)
+      .on('click',()=>oModal(e,imgUrl));
   });
 }
-function oModal(e){
+
+function oModal(e,imgUrl){
   const isMoto=e.t==='moto';
-  const mt=document.getElementById('m-type');mt.textContent=isMoto?'🏍️ Moto':'🚗 Voiture ancêtre';mt.className=`mtype ${e.t}`;
-  document.getElementById('m-date').textContent=fmt(e.date);
+  document.getElementById('m-type').textContent=isMoto?'🏍️ Moto':'🚗 Voiture ancêtre';
+  document.getElementById('m-type').className=`mtype ${e.t}`;
+  document.getElementById('m-stripe').className=`modal-stripe ${e.t}`;
+  document.getElementById('m-date').textContent=fmt(e.date)+(e.time?' · '+e.time:'');
   document.getElementById('m-title').textContent=e.title;
   document.getElementById('m-loc').textContent=e.loc;
   const ts=document.getElementById('m-tsec');
-  if(e.time){ts.style.display='block';document.getElementById('m-time').textContent=e.time;}else ts.style.display='none';
+  ts.style.display=e.time?'block':'none';
+  if(e.time)document.getElementById('m-time').textContent=e.time;
   document.getElementById('m-price').textContent=e.price;
   document.getElementById('m-dist').textContent=`${e.km} km depuis Waterloo`;
   const ds=document.getElementById('m-dsec');
   if(e.desc){ds.style.display='block';document.getElementById('m-desc').textContent=e.desc;}else ds.style.display='none';
   const gb=document.getElementById('m-gcal');gb.href=e.gcal;gb.className=`gcbtn ${e.t}`;
+  // Image
+  const img=document.getElementById('m-img'),ph=document.getElementById('m-img-ph');
+  ph.textContent=isMoto?'🏍️':'🚗';
+  img.onload=()=>{img.style.display='block';ph.style.display='none'};
+  img.onerror=()=>{img.style.display='none';ph.style.display='flex'};
+  img.src=imgUrl;
   document.getElementById('modal').classList.add('open');
 }
+
 document.getElementById('mc').onclick=()=>document.getElementById('modal').classList.remove('open');
 document.getElementById('modal').onclick=function(ev){if(ev.target===this)this.classList.remove('open')};
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.getElementById('modal').classList.remove('open')});
 document.getElementById('search').oninput=render;
 document.getElementById('sort').onchange=render;
 document.querySelectorAll('.filter-btn').forEach(b=>{b.onclick=function(){document.querySelectorAll('.filter-btn').forEach(x=>x.classList.remove('active'));this.classList.add('active');filt=this.dataset.f;render();}});
 document.querySelectorAll('.vb').forEach(b=>{b.onclick=function(){document.querySelectorAll('.vb').forEach(x=>x.classList.remove('active'));this.classList.add('active');view=this.dataset.v;if(view==='grid'){document.getElementById('mv').classList.remove('active');rGrid();}else rMap();}});
-document.querySelectorAll('.tt').forEach(b=>{b.onclick=function(){document.querySelectorAll('.tt').forEach(x=>{x.className='tt'});tf=this.dataset.type;this.className='tt a-'+tf;render();}});
+document.querySelectorAll('.tt').forEach(b=>{b.onclick=function(){document.querySelectorAll('.tt').forEach(x=>{x.className='tt'});tf=this.dataset.type;this.className=`tt a-${tf}`;render();}});
+
 stats();render();
 </script>
 </body>
